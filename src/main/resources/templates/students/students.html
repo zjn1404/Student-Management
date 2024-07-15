@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Students</title>
+    <link th:href="@{../../css/bootstrap.css}" th:rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h3 class="mt-3 fw-bold text-secondary">STUDENT LIST</h3>
+    <hr>
+    <div class="d-flex justify-content-between">
+        <div>
+            <a th:href="@{/students/save}" class="btn btn-warning text-white">Add student</a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Sort
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li>
+                        <a class="dropdown-item" th:if="${!isSearch}"
+                           th:href="@{/students/{page}(page=${currentPage}, sort='id')}">Sort by ID</a>
+                        <a class="dropdown-item" th:if="${isSearch}"
+                           th:href="@{/students/search(input=${searchInput}, sort='id')}">Sort by ID</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:if="${!isSearch}"
+                           th:href="@{/students/{page}(page=${currentPage}, sort='firstName')}">Sort by First Name</a>
+                        <a class="dropdown-item" th:if="${isSearch}"
+                           th:href="@{/students/search(input=${searchInput}, sort='firstName')}">Sort by First Name</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" th:if="${!isSearch}"
+                           th:href="@{/students/{page}(page=${currentPage}, sort='name')}">Sort by Name</a>
+                        <a class="dropdown-item" th:if="${isSearch}"
+                           th:href="@{/students/search(input=${searchInput}, sort='name')}">Sort by Name</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-flex" role="search" th:action="@{/students/search}"
+              method="GET">
+            <input type="search" id="search-input" name="input" class="form-control border-warning-subtle border-2"
+                   placeholder="Search..." aria-label="Search">
+            <input type="button" class="btn btn-outline-info ms-2" value="Show all"
+                   onclick="window.location.href='/students'">
+        </form>
+    </div>
+    <hr>
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-info">
+        <tr>
+            <td>ID</td>
+            <td>First Name</td>
+            <td>Name</td>
+            <td>Email</td>
+            <td>Manage</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+            <td th:text="${student.id}"></td>
+            <td th:text="${student.firstName}"></td>
+            <td th:text="${student.name}"></td>
+            <td th:text="${student.email}"></td>
+            <td>
+                <a th:href="@{/students/update(id=${student.id})}" class="btn btn-success btn-sm">
+                    Update
+                </a>
+                <a th:href="@{/students/delete(id=${student.id})}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to delete this student?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation" class="d-flex justify-content-center mt-4"
+         th:if="${!isSearch && !students.isEmpty()}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/students/{page}(page=${currentPage - 1})}">Previous</a>
+            </li>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/students/{page}(page=${i})}" th:text="${i + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/students/{page}(page=${currentPage + 1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</div>
+<script th:src="@{../../js/bootstrap.bundle.js}"></script>
+</body>
+</html>
