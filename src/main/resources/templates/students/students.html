@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+<html lang="en" xmlns:th="https://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -8,13 +8,18 @@
 </head>
 <body>
 <div class="container">
-    <h3 class="mt-3 fw-bold text-secondary">STUDENT LIST</h3>
+    <div class="d-flex justify-content-between mt-3">
+    <h3 class="fw-bold text-secondary">STUDENT LIST</h3>
+    <form action="#" th:action="@{/logout}" method="POST">
+        <input type="submit" class="btn text-white" style="background-color: #e1beea" value="Log out">
+    </form>
+    </div>
     <hr>
     <div class="d-flex justify-content-between">
         <div>
-            <a th:href="@{/students/save}" class="btn btn-warning text-white">Add student</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/students/save}" class="btn btn-warning text-white">Add student</a>
             <div class="btn-group">
-                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
+                <button sec:authorize="hasAnyRole('TEACHER', 'ADMIN', 'MANAGER')" type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown"
                         aria-expanded="false">
                     Sort
                 </button>
@@ -42,9 +47,9 @@
         </div>
         <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 d-flex" role="search" th:action="@{/students/search}"
               method="GET">
-            <input type="search" id="search-input" name="input" class="form-control border-warning-subtle border-2"
+            <input sec:authorize="hasAnyRole('TEACHER', 'ADMIN', 'MANAGER')" type="search" id="search-input" name="input" class="form-control border-warning-subtle border-2"
                    placeholder="Search..." aria-label="Search">
-            <input type="button" class="btn btn-outline-info ms-2" value="Show all"
+            <input sec:authorize="hasAnyRole('TEACHER', 'ADMIN', 'MANAGER')" type="button" class="btn btn-outline-info ms-2" value="Show all"
                    onclick="window.location.href='/students'">
         </form>
     </div>
@@ -56,7 +61,7 @@
             <td>First Name</td>
             <td>Name</td>
             <td>Email</td>
-            <td>Manage</td>
+            <td sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">Manage</td>
         </tr>
         </thead>
         <tbody>
@@ -65,11 +70,11 @@
             <td th:text="${student.firstName}"></td>
             <td th:text="${student.name}"></td>
             <td th:text="${student.email}"></td>
-            <td>
+            <td sec:authorize="hasAnyRole('ADMIN', 'MANAGER')">
                 <a th:href="@{/students/update(id=${student.id})}" class="btn btn-success btn-sm">
                     Update
                 </a>
-                <a th:href="@{/students/delete(id=${student.id})}" class="btn btn-danger btn-sm"
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/students/delete(id=${student.id})}" class="btn btn-danger btn-sm"
                    onclick="return confirm('Are you sure you want to delete this student?');">
                     Delete
                 </a>
